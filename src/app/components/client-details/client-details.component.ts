@@ -29,13 +29,27 @@ export class ClientDetailsComponent implements OnInit {
     this.id = this.route.snapshot.params['id'];
     // get client
     this.clientService.getClient(this.id).subscribe(client => {
+      if (client != null) {
+        if (client.balance > 0) {
+          this.hasBalance = true;
+        }
+      }
+
       this.client = client;
       console.log(this.client);
     })
   }
 
-  getClient() {
-
+  updateBalance() {
+    this.clientService.updateClient(this.client);
+    this.flashMessagesService.show('Balance updated', { cssClass: 'alert-success', timeout: 4000 });
   }
 
+  onDeleteClick() {
+    if(confirm('Are you sure?')) {
+      this.clientService.deleteClient(this.client);
+      this.flashMessagesService.show('Client deleted', { cssClass: 'alert-success', timeout: 4000 });
+      this.router.navigate(['/']);
+    }
+  }
 }
